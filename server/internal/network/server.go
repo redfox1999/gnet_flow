@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"sync/atomic"
-	"time"
 
 	"gnet_test1/config"
 	"gnet_test1/internal/pool"
@@ -14,11 +13,7 @@ import (
 )
 
 type UserContext struct {
-	ConnID     int64
-	UID        int64
-	Username   string
-	IsLoggedIn bool
-	LoginTime  time.Time
+	ConnID int64
 }
 
 type GatewayServer struct {
@@ -61,9 +56,7 @@ func (gs *GatewayServer) Start() error {
 func (gs *GatewayServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	connID := atomic.AddInt64(&gs.nextConnID, 1)
 	ctx := &UserContext{
-		ConnID:     connID,
-		IsLoggedIn: false,
-		LoginTime:  time.Now(),
+		ConnID: connID,
 	}
 	c.SetContext(ctx)
 	atomic.AddInt64(&gs.connCount, 1)
@@ -74,17 +67,12 @@ func (gs *GatewayServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 
 func (gs *GatewayServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	atomic.AddInt64(&gs.connCount, -1)
-	if ctx, ok := c.Context().(*UserContext); ok && ctx.IsLoggedIn {
-		log.Printf("[连接断开] ConnID=%d，用户离线: UID=%d, 名字=%s，当前在线: %d，错误=%v",
-			ctx.ConnID, ctx.UID, ctx.Username, atomic.LoadInt64(&gs.connCount), err)
-	} else {
-		var connID int64
-		if ctx, ok := c.Context().(*UserContext); ok {
-			connID = ctx.ConnID
-		}
-		log.Printf("[连接断开] ConnID=%d，未登录客户端断开: %s，当前在线: %d", connID,
-			c.RemoteAddr().String(), atomic.LoadInt64(&gs.connCount))
+	var connID int64
+	if ctx, ok := c.Context().(*UserContext); ok {
+		connID = ctx.ConnID
 	}
+	log.Printf("[连接断开] ConnID=%d，客户端断开: %s，当前在线: %d，错误=%v",
+		connID, c.RemoteAddr().String(), atomic.LoadInt64(&gs.connCount), err)
 	return gnet.None
 }
 
