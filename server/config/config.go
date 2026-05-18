@@ -108,6 +108,9 @@ func (c *Config) setDefaults() {
 	if c.Server.WorkerPoolSize <= 0 {
 		c.Server.WorkerPoolSize = Default.Server.WorkerPoolSize
 	}
+	if c.Server.TaskQueueSize <= 0 {
+		c.Server.TaskQueueSize = Default.Server.TaskQueueSize
+	}
 	if c.Server.MaxPacketSize <= 0 {
 		c.Server.MaxPacketSize = Default.Server.MaxPacketSize
 	}
