@@ -3,7 +3,9 @@ package network
 import (
 	"context"
 	"log"
+	"runtime"
 	"sync/atomic"
+	"time"
 
 	"gnet_test1/config"
 	"gnet_test1/internal/pool"
@@ -57,7 +59,22 @@ func (gs *GatewayServer) CloseEngine() {
 
 // Start 启动服务器
 func (gs *GatewayServer) Start() error {
+	go gs.statsReporter()
 	return gnet.Run(gs, gs.cfg.Addr, gnet.WithMulticore(gs.cfg.Multicore))
+}
+
+func (gs *GatewayServer) statsReporter() {
+	ticker := time.NewTicker(5 * time.Second)
+	defer ticker.Stop()
+	var m runtime.MemStats
+	for {
+		<-ticker.C
+		runtime.ReadMemStats(&m)
+		log.Printf("📊 状态监控: 连接数=%d, Goroutine数=%d, 内存占用=%.2fMB",
+			atomic.LoadInt64(&gs.connCount),
+			runtime.NumGoroutine(),
+			float64(m.Alloc)/1024/1024)
+	}
 }
 
 func (gs *GatewayServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
