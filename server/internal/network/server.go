@@ -60,19 +60,19 @@ func (gs *GatewayServer) OnOpen(c gnet.Conn) (out []byte, action gnet.Action) {
 	}
 	c.SetContext(ctx)
 	atomic.AddInt64(&gs.connCount, 1)
-	log.Printf("[连接成功] ConnID=%d，来自客户端: %s，当前在线: %d", connID,
-		c.RemoteAddr().String(), atomic.LoadInt64(&gs.connCount))
+	//log.Printf("[连接成功] ConnID=%d，来自客户端: %s，当前在线: %d", connID,
+	//	c.RemoteAddr().String(), atomic.LoadInt64(&gs.connCount))
 	return nil, gnet.None
 }
 
 func (gs *GatewayServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	atomic.AddInt64(&gs.connCount, -1)
-	var connID int64
-	if ctx, ok := c.Context().(*UserContext); ok {
-		connID = ctx.ConnID
-	}
-	log.Printf("[连接断开] ConnID=%d，客户端断开: %s，当前在线: %d，错误=%v",
-		connID, c.RemoteAddr().String(), atomic.LoadInt64(&gs.connCount), err)
+	//var connID int64
+	// if ctx, ok := c.Context().(*UserContext); ok {
+	// 	connID = ctx.ConnID
+	// }
+	//log.Printf("[连接断开] ConnID=%d，客户端断开: %s，当前在线: %d，错误=%v",
+	//	connID, c.RemoteAddr().String(), atomic.LoadInt64(&gs.connCount), err)
 	return gnet.None
 }
 
