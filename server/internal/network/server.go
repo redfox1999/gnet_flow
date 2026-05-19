@@ -40,7 +40,7 @@ func (gs *GatewayServer) Addr() string {
 
 func (gs *GatewayServer) OnBoot(eng gnet.Engine) gnet.Action {
 	cfg := config.Global
-	log.Printf("🚀 工业级网关已成功在 %s 启动！", cfg.Server.Addr)
+	log.Printf("🚀 网关已成功在 %s 启动！", cfg.Server.Addr)
 	log.Printf("📋 配置信息:")
 	log.Printf("   App: env=%s, version=%s", cfg.App.Env, cfg.App.Version)
 	log.Printf("   Server: multicore=%v, worker_pool_size=%d, task_queue_size=%d, max_packet_size=%d",

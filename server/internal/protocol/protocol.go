@@ -1,7 +1,6 @@
 package protocol
 
 import (
-	"bytes"
 	"encoding/binary"
 	"log"
 
@@ -25,16 +24,11 @@ const (
 // }
 
 func SendPacket(c gnet.Conn, cmdID uint32, body []byte) {
-	dataLen := len(body)
-	totalLen := HeaderLen + dataLen
+	var header [HeaderLen]byte
+	binary.BigEndian.PutUint32(header[0:4], cmdID)
+	binary.BigEndian.PutUint32(header[4:8], uint32(len(body)))
 
-	buf := bytes.NewBuffer(make([]byte, 0, totalLen))
-
-	_ = binary.Write(buf, binary.BigEndian, cmdID)
-	_ = binary.Write(buf, binary.BigEndian, uint32(dataLen))
-	_, _ = buf.Write(body)
-
-	err := c.AsyncWrite(buf.Bytes(), nil)
+	err := c.AsyncWritev([][]byte{header[:], body}, nil)
 	if err != nil {
 		log.Printf("[发送失败] 无法投递回包给 %s: %v", c.RemoteAddr().String(), err)
 	}
