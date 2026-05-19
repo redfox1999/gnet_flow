@@ -43,10 +43,10 @@ func (gs *GatewayServer) OnTraffic(c gnet.Conn) gnet.Action {
 
 		payload := fullPacket[int(protocol.HeaderLen):totalLen]
 
-		payloadCopy := pool.GetBytes(len(payload))
+		payloadCopy := pool.GetBytes(int(dataLen))
 		copy(payloadCopy, payload)
 
-		action := gs.dispatchBusiness(c, cmdID, payloadCopy)
+		action := gs.dispatchBusiness(c, cmdID, payloadCopy, int(dataLen))
 		if action != gnet.None {
 			finalAction = action
 			break

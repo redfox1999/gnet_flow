@@ -11,7 +11,7 @@ import (
 // CalculateHandler 处理计算请求
 type CalculateHandler struct{}
 
-func (h *CalculateHandler) Handle(c gnet.Conn, cmdID uint16, body []byte) {
+func (h *CalculateHandler) Handle(c gnet.Conn, cmdID uint32, body []byte) {
 	if len(body) < 8 {
 		return
 	}
@@ -22,29 +22,29 @@ func (h *CalculateHandler) Handle(c gnet.Conn, cmdID uint16, body []byte) {
 	binary.BigEndian.PutUint32(result[0:4], a)
 	binary.BigEndian.PutUint32(result[4:8], b)
 	binary.BigEndian.PutUint32(result[8:12], cResult)
-	protocol.SendPacket(c, uint32(cmdID), result)
+	protocol.SendPacket(c, cmdID, result)
 }
 
 // SmallHandler 处理小数据包请求
 type SmallHandler struct{}
 
-func (h *SmallHandler) Handle(c gnet.Conn, cmdID uint16, body []byte) {
+func (h *SmallHandler) Handle(c gnet.Conn, cmdID uint32, body []byte) {
 	//response := "small response"
-	protocol.SendPacket(c, uint32(cmdID), body)
+	protocol.SendPacket(c, cmdID, body)
 }
 
 // MediumHandler 处理中等数据包请求
 type MediumHandler struct{}
 
-func (h *MediumHandler) Handle(c gnet.Conn, cmdID uint16, body []byte) {
+func (h *MediumHandler) Handle(c gnet.Conn, cmdID uint32, body []byte) {
 	//response := "medium response"
-	protocol.SendPacket(c, uint32(cmdID), body)
+	protocol.SendPacket(c, cmdID, body)
 }
 
 // LargeHandler 处理大数据包请求
 type LargeHandler struct{}
 
-func (h *LargeHandler) Handle(c gnet.Conn, cmdID uint16, body []byte) {
+func (h *LargeHandler) Handle(c gnet.Conn, cmdID uint32, body []byte) {
 	//response := "large response"
-	protocol.SendPacket(c, uint32(cmdID), body)
+	protocol.SendPacket(c, cmdID, body)
 }

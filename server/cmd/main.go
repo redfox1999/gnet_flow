@@ -63,10 +63,10 @@ func main() {
 	router := handler.NewRouter()
 
 	// 注册测试用 Handler
-	router.Register(uint16(protocol.CmdCalculate), &handler.CalculateHandler{})
-	router.Register(uint16(protocol.CmdSmall), &handler.SmallHandler{})
-	router.Register(uint16(protocol.CmdMedium), &handler.MediumHandler{})
-	router.Register(uint16(protocol.CmdLarge), &handler.LargeHandler{})
+	router.Register(protocol.CmdCalculate, &handler.CalculateHandler{})
+	router.Register(protocol.CmdSmall, &handler.SmallHandler{})
+	router.Register(protocol.CmdMedium, &handler.MediumHandler{})
+	router.Register(protocol.CmdLarge, &handler.LargeHandler{})
 
 	// 初始化业务协程池
 	workerPool := pool.InitWorkerPool(config.Global.Server.WorkerPoolSize,

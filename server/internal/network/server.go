@@ -100,7 +100,7 @@ func (gs *GatewayServer) OnClose(c gnet.Conn, err error) (action gnet.Action) {
 	return gnet.None
 }
 
-func (gs *GatewayServer) dispatchBusiness(c gnet.Conn, cmdID uint32, payload []byte) gnet.Action {
+func (gs *GatewayServer) dispatchBusiness(c gnet.Conn, cmdID uint32, payload []byte, length int) gnet.Action {
 	if cmdID == protocol.CmdShutDown {
 		logger.Warn().Msg("⚠️ [核心管理] 收到管理员远程关服指令！准备停止全网服务...")
 		return gnet.Shutdown
@@ -115,7 +115,8 @@ func (gs *GatewayServer) dispatchBusiness(c gnet.Conn, cmdID uint32, payload []b
 
 	task := pool.GetWorkTask()
 	task.ConnID = connID
-	task.CmdID = uint16(cmdID)
+	task.CmdID = cmdID
+	task.DataLen = length
 	task.Body = payload
 	task.Conn = c
 	gs.workerPool.Submit(task)
