@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/binary"
 	"log"
-	"net"
 
 	"github.com/panjf2000/gnet/v2"
 )
@@ -20,12 +19,12 @@ const (
 )
 
 // Conn 定义连接接口
-type Conn interface {
-	RemoteAddr() net.Addr
-	AsyncWrite([]byte, gnet.AsyncCallback) error
-}
+// type Conn interface {
+// 	RemoteAddr() net.Addr
+// 	AsyncWrite([]byte, gnet.AsyncCallback) error
+// }
 
-func SendPacket(c Conn, cmdID uint32, body []byte) {
+func SendPacket(c gnet.Conn, cmdID uint32, body []byte) {
 	dataLen := len(body)
 	totalLen := HeaderLen + dataLen
 

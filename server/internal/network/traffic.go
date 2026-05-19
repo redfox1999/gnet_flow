@@ -23,7 +23,7 @@ func (gs *GatewayServer) OnTraffic(c gnet.Conn) gnet.Action {
 		dataLen := binary.BigEndian.Uint32(header[4:8])
 
 		totalLen := int(protocol.HeaderLen) + int(dataLen)
-		if totalLen > gs.cfg.MaxPacketSize || dataLen < 0 {
+		if totalLen > gs.cfg.MaxPacketSize {
 			log.Printf("[安全警告] 收到非法长度的恶意包: dataLen=%d，强制掐断客户端: %s", dataLen, c.RemoteAddr().String())
 			return gnet.Close
 		}
