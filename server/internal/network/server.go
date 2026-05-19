@@ -2,6 +2,7 @@ package network
 
 import (
 	"context"
+	"fmt"
 	"runtime"
 	"time"
 
@@ -79,7 +80,7 @@ func (gs *GatewayServer) statsReporter() {
 		logger.Info().
 			Int("connections", gs.connMgr.Count()).
 			Int("goroutines", runtime.NumGoroutine()).
-			Float64("memory_mb", float64(m.Alloc)/1024/1024).
+			Str("memory", fmt.Sprintf("%.2fMB", float64(m.Alloc)/1024/1024)).
 			Msg("📊 状态监控")
 	}
 }
