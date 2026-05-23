@@ -38,13 +38,10 @@ func main() {
 		return
 	}
 
-	// 加载配置文件
-	_, err := config.InitConfig(*cfgPath)
-	if err != nil {
-		logger.Warn().Err(err).Msg("加载配置文件失败，将使用默认配置")
-	}
+	// 加载配置文件（失败也继续，使用默认值）
+	_, _ = config.InitConfig(*cfgPath)
 
-	// 初始化日志系统
+	// 初始化日志系统（使用配置或默认值）
 	logger.Init(&logger.Config{
 		Level:      config.Global.Log.Level,
 		GnetLevel:  config.Global.Log.GnetLevel,
@@ -55,6 +52,11 @@ func main() {
 		MaxBackups: config.Global.Log.MaxBackups,
 		MaxAge:     config.Global.Log.MaxAge,
 	})
+
+	logger.Info().Str("level", config.Global.Log.Level).
+		Str("path", config.Global.Log.Path).
+		Bool("stdout", config.Global.Log.Stdout).
+		Msg("📝 日志系统已初始化")
 
 	// 将自定义日志设置为 gnet 的默认日志
 	logger.SetGnetDefaultLoggerAndFlusher()

@@ -139,6 +139,9 @@ func (c *Config) setDefaults() {
 	if c.Log.Path == "" {
 		c.Log.Path = Default.Log.Path
 	}
+	if !c.Log.Stdout {
+		c.Log.Stdout = Default.Log.Stdout
+	}
 	if c.Log.Filename == "" {
 		c.Log.Filename = Default.Log.Filename
 	}

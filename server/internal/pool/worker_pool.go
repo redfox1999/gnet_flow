@@ -2,6 +2,7 @@ package pool
 
 import (
 	"gnet_test1/internal/handler"
+	"gnet_test1/internal/manager"
 	"gnet_test1/pkg/logger"
 )
 
@@ -58,6 +59,8 @@ func InitWorkerPool(poolSize int, queueSize int, r *handler.Router) *WorkerPool 
 func (wp *WorkerPool) Submit(task *WorkTask) {
 	workerIdx := int(task.ConnID % uint64(wp.size))
 	targetWorker := wp.workers[workerIdx]
+	conn := task.Conn.Context().(manager.Conn)
+	conn.AddPendingTask()
 
 	// 使用 select 块实现「非阻塞」投递
 	select {

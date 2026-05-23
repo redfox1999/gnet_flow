@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"gnet_test1/internal/protocol"
 	"sync"
 	"sync/atomic"
 
@@ -14,12 +15,16 @@ type Conn interface {
 	Close()
 	Context() any
 	SetContext(ctx any)
+	PendingTasks() int32
+	AddPendingTask() int32
+	DelPendingTask() int32
 }
 
 type gnetConn struct {
-	conn gnet.Conn
-	id   uint64
-	ctx  any
+	conn         gnet.Conn
+	id           uint64
+	pendingTasks int32
+	ctx          any
 }
 
 func (c *gnetConn) ID() uint64 {
@@ -31,7 +36,7 @@ func (c *gnetConn) RemoteAddr() string {
 }
 
 func (c *gnetConn) Send(cmdID uint32, body []byte) error {
-	return c.conn.AsyncWrite(body, nil)
+	return protocol.SendPacket(c.conn, cmdID, body)
 }
 
 func (c *gnetConn) Close() {
@@ -44,6 +49,18 @@ func (c *gnetConn) Context() any {
 
 func (c *gnetConn) SetContext(ctx any) {
 	c.ctx = ctx
+}
+
+func (c *gnetConn) PendingTasks() int32 {
+	return c.pendingTasks
+}
+
+func (c *gnetConn) AddPendingTask() int32 {
+	return atomic.AddInt32(&c.pendingTasks, 1)
+}
+
+func (c *gnetConn) DelPendingTask() int32 {
+	return atomic.AddInt32(&c.pendingTasks, -1)
 }
 
 type ConnManager struct {

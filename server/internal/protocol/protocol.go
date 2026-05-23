@@ -12,7 +12,7 @@ const (
 	HeaderLen = 8
 )
 
-func SendPacket(c gnet.Conn, cmdID uint32, body []byte) {
+func SendPacket(c gnet.Conn, cmdID uint32, body []byte) error {
 	var header [HeaderLen]byte
 	binary.BigEndian.PutUint32(header[0:4], cmdID)
 	binary.BigEndian.PutUint32(header[4:8], uint32(len(body)))
@@ -24,4 +24,5 @@ func SendPacket(c gnet.Conn, cmdID uint32, body []byte) {
 			Str("remote_addr", c.RemoteAddr().String()).
 			Msg("[发送失败] 无法投递回包")
 	}
+	return err
 }

@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"gnet_test1/internal/manager"
+
 	"github.com/panjf2000/gnet/v2"
 )
 
@@ -41,6 +43,8 @@ func (r *Router) RegisterFunc(cmdID uint32, h func(c gnet.Conn, cmdID uint32, bo
 func (r *Router) Execute(c gnet.Conn, cmdID uint32, body []byte) {
 	if h, exists := r.handlers[cmdID]; exists {
 		h.Handle(c, cmdID, body)
+		conn := c.Context().(manager.Conn)
+		conn.DelPendingTask()
 	}
 
 	// 可以在这里加上内存池，回收 body 内存
